@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estoque de Insumos</title>
+
+<style>
+* {margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #0ee9a0, #92c717);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+  padding: 15px;
+}
+
+.card {
+  background: rgba(255,255,255,0.9);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* TABELA */
+.tabela {
+  width:100%;
+  border-collapse: collapse;
+}
+
+.tabela th, .tabela td {
+  padding:12px;
+  border-bottom:1px solid #e2e8f0;
+}
+
+.tabela th {
+  background:#f1f5f9;
+}
+
+/* 🔥 ALERTAS */
+.critico {
+  background:#fee2e2;
+  color:#991b1b;
+  font-weight:bold;
+}
+
+.atencao {
+  background:#fef9c3;
+  color:#854d0e;
+}
+
+/* DARK */
+body.dark {
+  background: linear-gradient(135deg, #020617, #0f172a);
+  color:#e2e8f0;
+}
+
+body.dark .card {
+  background: rgba(15,23,42,0.9);
+}
+
+body.dark .tabela th {
+  background:#1e293b;
+}
+
+body.dark .tabela td {
+  border-bottom:1px solid #334155;
+}
+
+body.dark .critico {
+  background:#7f1d1d;
+  color:#fecaca;
+}
+
+body.dark .atencao {
+  background:#713f12;
+  color:#fde68a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<div class="header">
+  <h1>Estoque de Insumos</h1>
+</div>
+
+<table class="tabela">
+<thead>
+<tr>
+<th>Insumo</th>
+<th>Quantidade</th>
+</tr>
+</thead>
+<tbody id="corpo"></tbody>
+</table>
+
+</div>
+</div>
+
+<script>
+const URL_API = "https://script.google.com/macros/s/AKfycbx-mdT6ZPPsLZoRuO9RxGrbLnHqzgDnG_9IpDGZo1MdJNDKJMzn5yPWqmYHItEpvCAtuQ/exec";
+
+// 🔥 LISTA FIXA
+const insumosFixos = [
+"Cupom",
+"Ribbon",
+"Pulseira 25x280",
+"Etiqueta 100x50",
+"Etiqueta 3cs 33x22 azul",
+"Etiqueta 3cs 33x22 branca",
+"Etiqueta 3cs 33x22 vermelha",
+"Etiqueta 3cs 33x22 amarela"
+];
+
+const corpo = document.getElementById("corpo");
+
+// 🔥 BUSCAR DADOS
+fetch(URL_API)
+.then(res => res.json())
+.then(dados => {
+
+  // mapa de estoque
+  const estoque = {};
+
+  dados.forEach(item => {
+    if (!estoque[item.insumo]) {
+      estoque[item.insumo] = 0;
+    }
+
+    estoque[item.insumo] += Number(item.quantidade);
+  });
+
+  // 🔥 monta tabela com lista fixa
+  insumosFixos.forEach(insumo => {
+
+    const qtd = estoque[insumo] || 0;
+
+    const tr = document.createElement("tr");
+
+    // 🔥 ALERTA
+    if (qtd <= 2) {
+      tr.classList.add("critico");
+    } else if (qtd <= 5) {
+      tr.classList.add("atencao");
+    }
+
+    tr.innerHTML = `
+      <td>${insumo}</td>
+      <td>${qtd}</td>
+    `;
+
+    corpo.appendChild(tr);
+  });
+
+});
+
+// 🌙 TEMA
+window.addEventListener("message", (event) => {
+  if (event.data.tema === "dark") {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+});
+</script>
+
+</body>
+</html>
