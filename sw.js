@@ -1,13 +1,13 @@
 self.addEventListener("install", event => {
   console.log("SW instalado");
-  self.skipWaiting();
+  self.skipWaiting(); // ativa o SW imediatamente
 });
 
 self.addEventListener("activate", event => {
   console.log("SW ativo");
-  self.clients.claim();
+  self.clients.claim(); // assume controle de todas as páginas
 });
 
 self.addEventListener("fetch", event => {
-  // futuramente você pode adicionar cache para offline
+  // futuramente você pode adicionar cache
 });
