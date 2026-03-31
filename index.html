@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insumos Cloud</title>
+
+<style>
+* {margin:0;padding:0;box-sizing:border-box;}
+
+/* 🔥 TEMA CLARO (PADRÃO) */
+:root {
+  --bg: linear-gradient(135deg, #0ea5e9, #14e460);
+  --menu-bg: rgba(255,255,255,0.9);
+  --menu-btn: #e2e8f0;
+  --text: #0f172a;
+  --card: #ffffff;
+}
+
+/* 🌙 TEMA ESCURO */
+.dark {
+  --bg: linear-gradient(135deg, #0f172a, #020617);
+  --menu-bg: rgba(15,23,42,0.9);
+  --menu-btn: #1e293b;
+  --text: #e2e8f0;
+  --card: #020617;
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: var(--bg);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  color: var(--text);
+  transition: 0.3s;
+}
+
+/* MENU */
+.menu {
+  display:flex;
+  gap:10px;
+  padding:12px;
+  background: var(--menu-bg);
+  backdrop-filter: blur(10px);
+  box-shadow:0 8px 25px rgba(0,0,0,0.2);
+}
+
+.menu button {
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+  background: var(--menu-btn);
+  color: var(--text);
+  transition: all 0.25s ease;
+}
+
+.menu button:hover {
+  background:#22c55e;
+  color:white;
+  transform: translateY(-2px);
+}
+
+.menu button.ativo {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color:white;
+}
+
+/* 🔥 BOTÃO TOGGLE */
+.menu .toggle {
+  flex:0;
+  width:50px;
+  font-size:18px;
+}
+
+/* ÁREA */
+.area {
+  flex:1;
+}
+
+iframe {
+  width:100%;
+  height:100%;
+  border:none;
+  background: var(--card);
+}
+</style>
+</head>
+
+<body>
+
+<div class="menu">
+  <button onclick="abrir('dashboard.html', this)">Dashboard</button>
+  <button onclick="abrir('entrada.html', this)">Entrada</button>
+  <button onclick="abrir('estoque.html', this)">Estoque</button>
+  <button onclick="abrir('saida.html', this)">Saída</button>
+  
+  <!-- 🌙 BOTÃO DARK MODE -->
+  <button class="toggle" onclick="toggleTema()">🌙</button>
+</div>
+
+<div class="area">
+  <iframe id="frame" src="entrada.html"></iframe>
+</div>
+
+<script>
+const frame = document.getElementById("frame");
+
+// 🔥 FUNÇÃO PRA ENVIAR TEMA PRO IFRAME
+function enviarTema(){
+  const tema = document.body.classList.contains("dark") ? "dark" : "light";
+  frame.contentWindow.postMessage({ tema }, "*");
+}
+
+// 🔥 ABRIR PÁGINA
+function abrir(pagina, botao){
+  frame.src = pagina;
+
+  document.querySelectorAll(".menu button")
+    .forEach(btn => btn.classList.remove("ativo"));
+
+  botao.classList.add("ativo");
+
+  // 🔥 quando carregar a nova página → envia tema
+  frame.onload = () => {
+    enviarTema();
+  };
+}
+
+// 🌙 Alternar tema
+function toggleTema(){
+  document.body.classList.toggle("dark");
+
+  const temaAtual = document.body.classList.contains("dark") ? "dark" : "light";
+  localStorage.setItem("tema", temaAtual);
+
+  // 🔥 envia tema na hora
+  enviarTema();
+}
+
+// 🔥 Carregar tudo ao iniciar
+window.onload = () => {
+  const temaSalvo = localStorage.getItem("tema");
+
+  if (temaSalvo === "dark") {
+    document.body.classList.add("dark");
+  }
+
+  document.querySelector(".menu button").classList.add("ativo");
+
+  // 🔥 envia tema inicial pro iframe
+  frame.onload = () => {
+    enviarTema();
+  };
+};
+</script>
+
+</body>
+</html>

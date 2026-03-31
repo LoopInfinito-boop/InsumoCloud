@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<title>Saída de Insumos</title>
+
+<style>
+
+/* RESET */
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+/* FUNDO */
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease; /* 🔥 animação suave */
+}
+
+/* CONTAINER */
+.container {
+  width: 100%;
+  max-width: 1000px;
+  padding: 15px;
+}
+
+/* CARD */
+.card {
+  width: 100%;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 22px;
+  color: #0f172a;
+}
+
+.header p {
+  color: #64748b;
+}
+
+/* GRID */
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+/* INPUT */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+label span {
+  color: red;
+}
+
+input, select {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 15px;
+}
+
+input:focus, select:focus {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20,184,166,0.2);
+  outline: none;
+}
+
+/* BOTÃO */
+.btn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity:0.6;
+}
+
+/* MSG */
+.msg {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  display: none;
+}
+
+.sucesso {
+  background:#dcfce7;
+  color:#166534;
+}
+
+.erro {
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+/* RESPONSIVO */
+@media (min-width:768px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .card {
+    padding: 25px;
+  }
+
+  .header h1 {
+    font-size: 26px;
+  }
+}
+
+/* 🌙 DARK MODE */
+body.dark {
+  background: linear-gradient(135deg, #020617, #0f172a);
+  color: #e2e8f0;
+}
+
+body.dark .card {
+  background: rgba(15,23,42,0.9);
+  color: #e2e8f0;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+body.dark .header h1 {
+  color: #e2e8f0;
+}
+
+body.dark .header p {
+  color: #94a3b8;
+}
+
+body.dark input,
+body.dark select {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+}
+
+body.dark input::placeholder {
+  color: #94a3b8;
+}
+
+body.dark input:focus,
+body.dark select:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+}
+
+body.dark .btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+body.dark .sucesso {
+  background:#064e3b;
+  color:#6ee7b7;
+}
+
+body.dark .erro {
+  background:#7f1d1d;
+  color:#fecaca;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<div class="header">
+  <h1>Saída de Insumos</h1>
+  <p>Controle de dispensação</p>
+</div>
+
+<form id="formSaida">
+
+<div class="form-grid">
+
+<div class="input-group">
+<label>ID <span>*</span></label>
+<input type="text" name="id" required>
+</div>
+
+<div class="input-group">
+<label>Responsável <span>*</span></label>
+<select name="responsavel" required>
+<option value="">Selecione...</option>
+<option>AMANDA ROCHA DA COSTA</option>
+<option>ANTONIO CEZAR GONCALVES ARAUJO JUNIOR</option>
+<option>DANIEL MOREIRA DA SILVA DOS ANJOS</option>
+<option>MARCOS DANIEL TAVARES DOS SANTOS</option>
+<option>JOSE MARIA GONÇALVES ALFONSO NETO</option>
+<option>TOMÉ DE JESUS SOSINHO GONÇALVES FILHO</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Insumo <span>*</span></label>
+<select name="insumo" id="insumoSelect" required>
+<option value="">Selecione...</option>
+<option>Cupom</option>
+<option>Ribbon</option>
+<option>Pulseira 25x280</option>
+<option>Etiqueta 100x50</option>
+<option>Etiqueta 3cs 33x22 azul</option>
+<option>Etiqueta 3cs 33x22 branca</option>
+<option>Etiqueta 3cs 33x22 vermelha</option>
+<option>Etiqueta 3cs 33x22 amarela</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Setor / Área <span>*</span></label>
+<select name="setor_area" id="setorSelect" required>
+<option value="">Selecione...</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Quantidade <span>*</span></label>
+<input type="number" name="quantidade" min="1" required>
+</div>
+
+<div class="input-group">
+<label>Descrição</label>
+<input type="text" name="descricao">
+</div>
+
+</div>
+
+<button class="btn" id="btn">Registrar</button>
+<div id="msg" class="msg"></div>
+
+</form>
+
+</div>
+</div>
+
+<script>
+// SEU JS ORIGINAL (INALTERADO)
+const form = document.getElementById("formSaida");
+const msg = document.getElementById("msg");
+const btn = document.getElementById("btn");
+
+const todosSetores = [
+"ETIQUETADORA FARMACIA SATELITE PA",
+"ETIQUETADORA URGENCIA",
+"PULSEIRA URGENCIA",
+"ETIQUETADORA VISITANTES",
+"CUPOM TOTEM VISITANTES",
+"CUPOM TOTEM SADT",
+"CUPOM TOTEM RECEPÇÃO 1",
+"CUPOM TOTEM RECEPÇÃO 4",
+"CUPOM FARMACIA CENTRAL",
+"PULSEIRA RECEPÇÃO 5 / NIR",
+"ETIQUETADORA MAIS SABOR",
+"ETIQUETADORA CME",
+"ETIQUETADORA CAF",
+"ETIQUETADORA FARMACIA SATELITE UTI",
+"PULSEIRA 6 ANDAR",
+"PULSEIRA 8 ANDAR",
+"ETIQUETADORA FARMACIA CENTRAL"
+];
+
+const setoresPorInsumo = {
+"Cupom": todosSetores.filter(s => s.includes("CUPOM")),
+"Pulseira 25x280": todosSetores.filter(s => s.includes("PULSEIRA")),
+"Ribbon": todosSetores.filter(s => s.includes("ETIQUETADORA")),
+"Etiqueta 100x50": todosSetores.filter(s => s.includes("ETIQUETADORA")),
+"Etiqueta 3cs 33x22 azul": todosSetores.filter(s => s.includes("ETIQUETADORA")),
+"Etiqueta 3cs 33x22 branca": todosSetores.filter(s => s.includes("ETIQUETADORA")),
+"Etiqueta 3cs 33x22 vermelha": todosSetores.filter(s => s.includes("ETIQUETADORA")),
+"Etiqueta 3cs 33x22 amarela": todosSetores.filter(s => s.includes("ETIQUETADORA"))
+};
+
+const insumoSelect = document.getElementById("insumoSelect");
+const setorSelect = document.getElementById("setorSelect");
+
+insumoSelect.addEventListener("change", () => {
+const insumo = insumoSelect.value;
+setorSelect.innerHTML = '<option value="">Selecione...</option>';
+
+const setores = setoresPorInsumo[insumo] || [];
+
+setores.forEach(s => {
+const opt = document.createElement("option");
+opt.value = s;
+opt.textContent = s;
+setorSelect.appendChild(opt);
+});
+});
+
+const URL_API = "https://script.google.com/macros/s/AKfycbx-mdT6ZPPsLZoRuO9RxGrbLnHqzgDnG_9IpDGZo1MdJNDKJMzn5yPWqmYHItEpvCAtuQ/exec";
+
+form.addEventListener("submit", e => {
+e.preventDefault();
+
+const dados = Object.fromEntries(new FormData(form).entries());
+dados.tipo = "SAIDA";
+
+if (!dados.setor_area) {
+msg.innerText = "Selecione um setor!";
+msg.className = "msg erro";
+msg.style.display = "block";
+return;
+}
+
+btn.disabled = true;
+btn.innerText = "Enviando...";
+msg.style.display = "none";
+
+fetch(URL_API, {
+method: "POST",
+body: JSON.stringify(dados)
+})
+.then(res => res.json())
+.then(res => {
+msg.innerText = res.message;
+msg.className = res.success ? "msg sucesso" : "msg erro";
+msg.style.display = "block";
+
+if (res.success) form.reset();
+
+btn.disabled = false;
+btn.innerText = "Registrar";
+})
+.catch(err => {
+msg.innerText = err.message;
+msg.className = "msg erro";
+msg.style.display = "block";
+
+btn.disabled = false;
+btn.innerText = "Registrar";
+});
+});
+
+if ("serviceWorker" in navigator) {
+navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+<script>
+// 🔥 RECEBE TEMA DO SISTEMA
+window.addEventListener("message", (event) => {
+  if (event.data.tema === "dark") {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+* {margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #0ea5e9, #22c55e);
+  min-height:100vh;
+  padding:20px;
+  transition:0.3s;
+}
+
+.container {
+  max-width:1100px;
+  margin:auto;
+}
+
+.cards {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.card {
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.card h2 {
+  font-size:28px;
+}
+
+.card p {
+  color:#64748b;
+}
+
+/* gráfico */
+.grafico {
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* ranking */
+.ranking {
+  margin-top:20px;
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.ranking ul {
+  list-style:none;
+}
+
+.ranking li {
+  padding:8px 0;
+  border-bottom:1px solid #eee;
+}
+
+/* DARK */
+body.dark {
+  background: linear-gradient(135deg, #020617, #0f172a);
+  color:#e2e8f0;
+}
+
+body.dark .card,
+body.dark .grafico,
+body.dark .ranking {
+  background:#1e293b;
+}
+
+body.dark .card p {
+  color:#94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="cards">
+  <div class="card">
+    <h2 id="total">0</h2>
+    <p>Total em estoque</p>
+  </div>
+
+  <div class="card">
+    <h2 id="criticos">0</h2>
+    <p>Itens críticos</p>
+  </div>
+</div>
+
+<div class="grafico">
+  <canvas id="grafico"></canvas>
+</div>
+
+<div class="ranking">
+  <h3>Mais consumidos</h3>
+  <ul id="ranking"></ul>
+</div>
+
+</div>
+
+<script>
+const URL_API = "https://script.google.com/macros/s/AKfycbx-mdT6ZPPsLZoRuO9RxGrbLnHqzgDnG_9IpDGZo1MdJNDKJMzn5yPWqmYHItEpvCAtuQ/exec";
+
+// mesma lista fixa
+const insumosFixos = [
+"Cupom","Ribbon","Pulseira 25x280","Etiqueta 100x50",
+"Etiqueta 3cs 33x22 azul","Etiqueta 3cs 33x22 branca",
+"Etiqueta 3cs 33x22 vermelha","Etiqueta 3cs 33x22 amarela"
+];
+
+fetch(URL_API)
+.then(res => res.json())
+.then(dados => {
+
+  const estoque = {};
+  const consumo = {};
+
+  dados.forEach(item => {
+    const nome = item.insumo;
+    const qtd = Number(item.quantidade);
+
+    if (!estoque[nome]) estoque[nome] = 0;
+    estoque[nome] += qtd;
+
+    // consumo (negativo = saída)
+    if (qtd < 0) {
+      if (!consumo[nome]) consumo[nome] = 0;
+      consumo[nome] += Math.abs(qtd);
+    }
+  });
+
+  let total = 0;
+  let criticos = 0;
+
+  insumosFixos.forEach(nome => {
+    const qtd = estoque[nome] || 0;
+    total += qtd;
+
+    if (qtd <= 4) criticos++;
+  });
+
+  document.getElementById("total").innerText = total;
+  document.getElementById("criticos").innerText = criticos;
+
+  // ranking consumo
+  const ranking = Object.entries(consumo)
+    .sort((a,b) => b[1]-a[1])
+    .slice(0,5);
+
+  const lista = document.getElementById("ranking");
+
+  ranking.forEach(item => {
+    const li = document.createElement("li");
+    li.innerText = `${item[0]} - ${item[1]}`;
+    lista.appendChild(li);
+  });
+
+  // gráfico
+  const labels = insumosFixos;
+  const valores = insumosFixos.map(i => estoque[i] || 0);
+
+  new Chart(document.getElementById("grafico"), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Estoque",
+        data: valores
+      }]
+    }
+  });
+
+});
+
+// tema
+window.addEventListener("message", (event) => {
+  if (event.data.tema === "dark") {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+});
+</script>
+
+</body>
+</html>
