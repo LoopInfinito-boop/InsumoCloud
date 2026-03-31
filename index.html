@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Insumos Cloud</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f172a">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insumos Cloud</title>
 
   <style>
     * {margin:0;padding:0;box-sizing:border-box;}
@@ -31,7 +30,7 @@
     body {
       font-family: "Segoe UI", sans-serif;
       background: var(--bg);
-      min-height:100vh;
+      height:100vh;
       display:flex;
       flex-direction:column;
       color: var(--text);
@@ -71,38 +70,34 @@
       color:white;
     }
 
+    /* 🔥 BOTÃO TOGGLE */
     .menu .toggle {
       flex:0;
       width:50px;
       font-size:18px;
     }
 
+    /* ÁREA */
     .area {
       flex:1;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      padding:10px;
     }
 
     iframe {
       width:100%;
-      height:400px;
+      height:100%;
       border:none;
       background: var(--card);
-      border-radius:12px;
-      box-shadow:0 5px 15px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 
 <body>
-
   <div class="menu">
     <button onclick="abrir('dashboard.html', this)">Dashboard</button>
     <button onclick="abrir('entrada.html', this)">Entrada</button>
     <button onclick="abrir('estoque.html', this)">Estoque</button>
     <button onclick="abrir('saida.html', this)">Saída</button>
+    <!-- 🌙 BOTÃO DARK MODE -->
     <button class="toggle" onclick="toggleTema()">🌙</button>
   </div>
 
@@ -113,40 +108,50 @@
   <script>
     const frame = document.getElementById("frame");
 
+    // 🔥 FUNÇÃO PRA ENVIAR TEMA PRO IFRAME
     function enviarTema(){
       const tema = document.body.classList.contains("dark") ? "dark" : "light";
       frame.contentWindow.postMessage({ tema }, "*");
     }
 
+    // 🔥 ABRIR PÁGINA
     function abrir(pagina, botao){
       frame.src = pagina;
-      document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("ativo"));
+      document.querySelectorAll(".menu button")
+        .forEach(btn => btn.classList.remove("ativo"));
       botao.classList.add("ativo");
-      frame.onload = () => enviarTema();
+
+      // 🔥 quando carregar a nova página → envia tema
+      frame.onload = () => { enviarTema(); };
     }
 
+    // 🌙 Alternar tema
     function toggleTema(){
       document.body.classList.toggle("dark");
       const temaAtual = document.body.classList.contains("dark") ? "dark" : "light";
       localStorage.setItem("tema", temaAtual);
+
+      // 🔥 envia tema na hora
       enviarTema();
     }
 
+    // 🔥 Carregar tudo ao iniciar
     window.onload = () => {
       const temaSalvo = localStorage.getItem("tema");
-      if(temaSalvo === "dark") document.body.classList.add("dark");
+      if (temaSalvo === "dark") { document.body.classList.add("dark"); }
       document.querySelector(".menu button").classList.add("ativo");
-      frame.onload = () => enviarTema();
+
+      // 🔥 envia tema inicial pro iframe
+      frame.onload = () => { enviarTema(); };
     };
   </script>
 
   <script>
-    if("serviceWorker" in navigator){
-      navigator.serviceWorker.register("sw.js")
-        .then(()=>console.log("SW registrado"))
-        .catch(err=>console.log("Erro SW:", err));
-    }
+    if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js", { scope: "./" })
+    .then(() => console.log("SW registrado com scope"))
+    .catch(err => console.log("Erro SW:", err));
+}
   </script>
-
 </body>
 </html>
