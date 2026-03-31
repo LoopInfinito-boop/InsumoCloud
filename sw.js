@@ -1,11 +1,13 @@
 self.addEventListener("install", event => {
+  console.log("SW instalado");
   self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
+  console.log("SW ativo");
   self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
-  // pode evoluir depois com cache
+  // futuramente você pode adicionar cache para offline
 });
